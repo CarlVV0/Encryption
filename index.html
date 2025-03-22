@@ -127,34 +127,47 @@
     </div>
 
     <script>
-        function caesarCipher(text, shift, mode) {
-            let result = "";
-            if (mode === "decrypt") shift = -shift; // Reverse shift for decryption
+  function caesarCipher(text, shift, mode) {
+    let result = "";
+    if (mode === "decrypt") shift = (26 - shift) % 26; // Fix negative shift issues
 
-            for (let i = 0; i < text.length; i++) {
-                let char = text[i];
-                if (char.match(/[a-z]/i)) {
-                    let code = text.charCodeAt(i);
-                    let base = (char === char.toUpperCase()) ? 65 : 97;
-                    result += String.fromCharCode(((code - base + shift + 26) % 26) + base);
-                } else {
-                    result += char; // Keep spaces and special characters unchanged
-                }
-            }
-            return result;
+    for (let i = 0; i < text.length; i++) {
+        let char = text[i];
+        if (char.match(/[a-z]/i)) {
+            let code = text.charCodeAt(i);
+            let base = (char === char.toUpperCase()) ? 65 : 97;
+            result += String.fromCharCode(((code - base + shift) % 26) + base);
+        } else {
+            result += char; // Keep spaces and special characters unchanged
         }
+    }
+    return result;
+}
 
-        function encrypt() {
-            let text = document.getElementById("text").value;
-            let shift = parseInt(document.getElementById("shift").value);
-            document.getElementById("result").value = caesarCipher(text, shift, "encrypt");
-        }
+function encrypt() {
+    let text = document.getElementById("text").value;
+    let shift = parseInt(document.getElementById("shift").value);
+    if (text.trim() === "") {
+        alert("Please enter text to encrypt!");
+        return;
+    }
+    let encryptedText = caesarCipher(text, shift, "encrypt");
+    document.getElementById("result").value = encryptedText;
+    document.getElementById("text").value = ""; // Clear input after encryption
+}
 
-        function decrypt() {
-            let text = document.getElementById("text").value;
-            let shift = parseInt(document.getElementById("shift").value);
-            document.getElementById("result").value = caesarCipher(text, shift, "decrypt");
-        }
+function decrypt() {
+    let text = document.getElementById("result").value;
+    let shift = parseInt(document.getElementById("shift").value);
+    if (text.trim() === "") {
+        alert("Please enter text to decrypt!");
+        return;
+    }
+    let decryptedText = caesarCipher(text, shift, "decrypt");
+    document.getElementById("text").value = decryptedText; // Move decrypted text back to input
+    document.getElementById("result").value = ""; // Clear result after decryption
+}
+
     </script>
 
 </body>
